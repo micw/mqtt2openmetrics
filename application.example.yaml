@@ -43,6 +43,7 @@ extract:
     metrics:
       - name: totalEnergy
         # a timestamp, extracted from the payload by JSON-Path
+        # If the timestamp has no timezone, the system timezone will be used
         time: $(JSON:Time)
         tags:
           type: steckdose

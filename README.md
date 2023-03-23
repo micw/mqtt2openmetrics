@@ -16,7 +16,10 @@ Currently, I use it for my personal needs only. Create an issue if you require m
 
 ```
 docker run -it --rm \
+  -e TZ=Europe/Berlin \
   -v  /path/to/application.yaml:/application.yaml \
   ghcr.io/micw/mqtt2openmetrics:master
 
 ```
+
+The timezone should be set if timestamps without timezone are extracted from MQTT payloads. Default is Europe/Berlin.
