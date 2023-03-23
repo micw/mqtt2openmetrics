@@ -1,0 +1,64 @@
+
+# Define an MQTT source
+mqtt:
+  host: 192.168.1.2
+  username: mqttuser
+  password: mqttpass
+  # Topics are optinal. If not configured, topics will be taken from extractors
+  topics: |
+    steckdose/+/SENSOR
+    solar/+/+/#
+
+# Define the target to push to
+openmetrics:
+  url: https://vmserver.example.com/api/v1/import/prometheus
+  username: metricsuser
+  password: metricpass
+
+# define extrators to get metrics from mqtt
+extract:
+  # a list of topics to watch
+  - topics:
+    - solar/+/+/power
+    - solar/+/+/yieldtotal
+    - solar/+/+/yieldday
+    - solar/+/0/frequency
+    - solar/+/0/temperature
+    # a list of metrics to extract. These are from https://github.com/tbnobody/OpenDTU
+    metrics:
+        # the name of the metric is taken from 4th section of the topic (split by "/")
+      - name: $(TOPIC:4)
+        # the value is directly taken from the topic's payload
+        value: $(VALUE)
+        # a list of additional metric tags
+        tags:
+          # a static tag
+          type: solar
+          # a tag taken from the 2nd section of the topic
+          meter: $(TOPIC:2)
+          channel: $(TOPIC:3)
+  - topics:
+    - steckdose/+/SENSOR
+    # this metrics are from a Wall-Plug with Tasmota Firmware 
+    metrics:
+      - name: totalEnergy
+        # a timestamp, extracted from the payload by JSON-Path
+        time: $(JSON:Time)
+        tags:
+          type: steckdose
+          meter: $(TOPIC:2)
+        # the value is extracted from the payload by JSON-Path
+        value: $(JSON:ENERGY.Total)
+      - name: power
+        time: $(JSON:Time)
+        tags:
+          type: steckdose
+          meter: $(TOPIC:2)
+        value: $(JSON:ENERGY.Power)
+      - name: voltage
+        time: $(JSON:Time)
+        tags:
+          type: steckdose
+          meter: $(TOPIC:2)
+        value: $(JSON:ENERGY.Voltage)
+

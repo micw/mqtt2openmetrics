@@ -1,0 +1,28 @@
+extract:
+  - topics:
+    - grid/+/powerTotal
+    - grid/+/energyExportTotal
+    metrics:
+      - name: $(TOPIC:3)
+        tags:
+          meter: $(TOPIC:2)
+        value: $(VALUE)
+
+  - topics:
+    - steckdose/+/SENSOR
+    metrics:
+      - name: totalEnergy
+        time: $(JSON:Time)
+        tags:
+          steckdose: $(TOPIC:2)
+        value: $(JSON:ENERGY.Total)
+      - name: power
+        time: $(JSON:Time)
+        tags:
+          steckdose: $(TOPIC:2)
+        value: $(JSON:ENERGY.Power)
+      - name: voltage
+        time: $(JSON:Time)
+        tags:
+          steckdose: $(TOPIC:2)
+        value: $(JSON:ENERGY.Voltage)
