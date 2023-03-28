@@ -1,3 +1,9 @@
+# Setup logging
+
+logging:
+  level:
+    root: WARN
+    de.wyraz.mqtt2om: INFO
 
 # Define an MQTT source
 mqtt:
